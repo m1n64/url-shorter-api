@@ -1,5 +1,5 @@
 # Variables
-SERVICES = infrastructure-service user-service
+SERVICES = infrastructure-service user-service link-service
 SHARED_NETWORK_DELAY = 15
 
 .PHONY: help

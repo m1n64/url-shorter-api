@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package links;
+
+option go_package = "./internal/links/grpc;links";
+
+service LinkService {
+  rpc GetLinks(GetLinksRequest) returns (GetLinksResponse);
+  rpc GetLink(GetLinkRequest) returns (LinkResponse);
+  rpc CreateLink(CreateLinkRequest) returns (LinkResponse);
+  rpc DeleteLink(DeleteLinkRequest) returns (DeleteLinkResponse);
+  rpc GenerateSlug(Empty) returns (GenerateSlugResponse);
+}
+
+message Empty {}
+
+message GetLinksRequest {
+  string user_id = 1;
+}
+
+message GetLinkRequest {
+  string slug = 1;
+}
+
+message CreateLinkRequest {
+  string user_id = 1;
+  string url = 2;
+  optional string slug = 3;
+}
+
+message DeleteLinkRequest {
+  string user_id = 1;
+  string id = 2;
+}
+
+message GetLinksResponse {
+  repeated LinkResponse links = 1;
+}
+
+message LinkResponse {
+  string id = 1;
+  string user_id = 2;
+  string slug = 3;
+  string url = 4;
+  string created_at = 5;
+}
+
+message DeleteLinkResponse {
+  bool deleted = 1;
+}
+
+message GenerateSlugResponse {
+  string slug = 1;
+}
