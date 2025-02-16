@@ -1,9 +1,8 @@
-FROM nginx:latest
+FROM openresty/openresty:latest
 
-RUN apt-get update && apt-get install -y \
-    libnginx-mod-http-memcached
+RUN opm get openresty/lua-resty-memcached
 
 COPY ../../config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ../../config/nginx/ssl /etc/nginx/ssl
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["openresty", "-g", "daemon off;"]

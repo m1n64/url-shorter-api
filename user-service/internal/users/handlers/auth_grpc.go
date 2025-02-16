@@ -23,12 +23,12 @@ func NewAuthServiceServer(authService *services.AuthService, logger *zap.Logger)
 	}
 }
 
-func (s *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.TokenResponse, error) {
-	if req.Username == "" || req.Email == "" || req.Password == "" {
+func (s *AuthServiceServer) Register(ctx context.Context, req *auth.AuthRequest) (*auth.TokenResponse, error) {
+	if req.Email == "" || req.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "username, email, and password are required")
 	}
 
-	token, err := s.authService.Register(req.Username, req.Email, req.Password)
+	token, err := s.authService.Register(req.Email, req.Password)
 	if err != nil {
 		s.logger.Error("Error registering user", zap.Error(err))
 		return nil, err
@@ -40,7 +40,7 @@ func (s *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequ
 	}, nil
 }
 
-func (s *AuthServiceServer) Login(ctx context.Context, req *auth.LoginRequest) (*auth.TokenResponse, error) {
+func (s *AuthServiceServer) Login(ctx context.Context, req *auth.AuthRequest) (*auth.TokenResponse, error) {
 	if req.Email == "" || req.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "email and password are required")
 	}
@@ -91,9 +91,8 @@ func (s *AuthServiceServer) GetUserInfo(ctx context.Context, req *auth.GetUserIn
 	}
 
 	return &auth.GetUserInfoResponse{
-		UserId:   user.ID.String(),
-		Username: user.Username,
-		Email:    user.Email,
+		UserId: user.ID.String(),
+		Email:  user.Email,
 	}, nil
 }
 

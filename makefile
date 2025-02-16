@@ -23,7 +23,7 @@ init:
 up:
 	@echo "🚀 Start all serviceS..."
 	@for service in $(SERVICES); do \
-    	if [ "$$service" = "shared-network" ]; then \
+    	if [ "$$service" = "infrastructure-service" ]; then \
     		echo "🟢 Starting $$service with default compose file..."; \
     		(cd $$service && docker-compose up -d || echo "❌ Error starting $$service"); \
     		echo "⏳ Waiting for shared-network to be ready for $(SHARED_NETWORK_DELAY) seconds..."; \
@@ -46,7 +46,7 @@ stop:
 restart:
 	@echo "🔄 Reload all services..."
 	@for service in $(SERVICES); do \
-  		if [ "$$service" = "shared-network" ]; then \
+  		if [ "$$service" = "infrastructure-service" ]; then \
       		echo "🔄 Reload $$service with default compose file..."; \
       		(cd $$service && docker-compose restart || echo "❌ Error restarting $$service"); \
       		echo "⏳ Waiting for shared-network to be ready for $(SHARED_NETWORK_DELAY) seconds..."; \
@@ -60,11 +60,11 @@ restart:
 .PHONY: restart-service
 restart-service:
 	@if [ -z "$(SERVICE)" ]; then \
-		echo "❌ Please specify a service to restart, e.g., 'make restart-service SERVICE=cv-service'"; \
+		echo "❌ Please specify a service to restart, e.g., 'make restart-service SERVICE=user-service'"; \
 		exit 1; \
 	fi
 	@echo "🔄 Restarting service: $(SERVICE)..."
-	@if [ "$(SERVICE)" = "shared-network" ]; then \
+	@if [ "$(SERVICE)" = "infrastructure-service" ]; then \
     	(cd $(SERVICE) && docker-compose up -d || echo "❌ Error starting $(SERVICE)"); \
     else \
     	(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error restarting $(SERVICE)"); \
@@ -73,11 +73,11 @@ restart-service:
 .PHONY: up-service
 up-service:
 	@if [ -z "$(SERVICE)" ]; then \
-		echo "❌ Please specify a service to start, e.g., 'make up-service SERVICE=cv-service'"; \
+		echo "❌ Please specify a service to start, e.g., 'make up-service SERVICE=user-service'"; \
 		exit 1; \
 	fi
 	@echo "🚀 Starting service: $(SERVICE)..."
-	@if [ "$(SERVICE)" = "shared-network" ]; then \
+	@if [ "$(SERVICE)" = "infrastructure-service" ]; then \
     	(cd $(SERVICE) && docker-compose up -d || echo "❌ Error starting $(SERVICE)"); \
     else \
     	(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error starting $(SERVICE)"); \
@@ -86,7 +86,7 @@ up-service:
 .PHONY: stop-service
 stop-service:
 	@if [ -z "$(SERVICE)" ]; then \
-		echo "❌ Please specify a service to stop, e.g., 'make stop-service SERVICE=cv-service'"; \
+		echo "❌ Please specify a service to stop, e.g., 'make stop-service SERVICE=user-service'"; \
 		exit 1; \
 	fi
 	@echo "📴 Stopping service: $(SERVICE)..."
@@ -95,4 +95,4 @@ stop-service:
 .PHONY: network
 network:
 	@echo "🌐 Create network..."
-	docker network create tidy-url-network || echo "❌ Network \"cv-generator-network\" already exists"
+	docker network create tidy-url-network || echo "❌ Network \"tidy-url-network\" already exists"

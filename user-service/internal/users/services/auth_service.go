@@ -25,7 +25,7 @@ func NewAuthService(userRepo repositories.UserRepository, tokenRepo repositories
 	}
 }
 
-func (s *AuthService) Register(username string, email string, password string) (*string, error) {
+func (s *AuthService) Register(email string, password string) (*string, error) {
 	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to process password")
@@ -34,7 +34,6 @@ func (s *AuthService) Register(username string, email string, password string) (
 	var jwtToken string
 	err = s.db.Transaction(func(tx *gorm.DB) error {
 		user := &models.User{
-			Username: username,
 			Email:    email,
 			Password: hashedPassword,
 		}

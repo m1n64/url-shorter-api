@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     restart: unless-stopped
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - tu_user_db_data:/var/lib/postgresql/data
     networks:
       - tidy-url-network
 
@@ -19,7 +19,7 @@ services:
     hostname: redis
     image: redis:latest
     volumes:
-      - redis_data:/data
+      - tu_user_redis_data:/data
     restart: unless-stopped
     networks:
       - tidy-url-network
@@ -50,9 +50,9 @@ services:
       - tidy-url-network
 
 volumes:
-  db_data:
+  tu_user_db_data:
     driver: local
-  redis_data:
+  tu_user_redis_data:
     driver: local
 
 networks:

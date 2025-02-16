@@ -27,7 +27,7 @@ func InitDependencies() *Dependencies {
 	logger := utils.InitLogs()
 	utils.LoadEnv()
 	redisConn := utils.CreateRedisConn()
-	dbConn := utils.InitDBConnection(os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_NAME"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"))
+	dbConn := utils.InitDBConnection(os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_NAME"), os.Getenv("DB_PORT"))
 	utils.StartMigrations()
 	validate := utils.InitValidator()
 	rabbitMQ := utils.ConnectRabbitMQ(os.Getenv("RABBITMQ_HOST"))
