@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./internal/users/grpc/auth;auth";
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (TokenResponse);
+  rpc Login(LoginRequest) returns (TokenResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc Logout(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message TokenResponse {
+  string token = 1;
+  string expires_at = 2;
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  string user_id = 1;
+  bool valid = 2;
+}
+
+message GetUserInfoRequest {
+  string token = 1;
+}
+
+message GetUserInfoResponse {
+  string user_id = 1;
+  string username = 2;
+  string email = 3;
+}

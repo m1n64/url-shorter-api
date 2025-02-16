@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+.env
+tmp/*
+app.log
+go1.22.1.linux-amd64.tar.gz
+main

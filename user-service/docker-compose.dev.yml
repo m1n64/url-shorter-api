@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  tu-user-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: dev
+    container_name: tu-user-backend
+    volumes:
+      - ./:/app:cached
+    command: air
+    ports:
+      - "5864:5864"
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    networks:
+      - tidy-url-network
