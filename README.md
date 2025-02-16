@@ -4,12 +4,15 @@
 This project is a simple URL shorter API, written on Go in microservice architecture. It is a simple REST API with gRPC services.
 
 ### Links:
+- [github](https://github.com/m1n64/url-shorter-api)
 
 ### Checklist:
 - [x] user-service (Authorization, token validation, user info) (gRPC)
 - [ ] url-service (URL shorter information) (gRPC, RabbitMQ)
 - [ ] analytics-service (URL redirect analytics) (gRPC, RabbitMQ)
 - [ ] infrastructure-service (nginx, memcache, rabbitmq)
+- [ ] gateway-service (REST API, maybe Krakend)
+- [ ] API docs service
 
 ### Peculiarities:
 - Microservice architecture
