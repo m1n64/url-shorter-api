@@ -10,6 +10,7 @@ type Link struct {
 	UserID uuid.UUID `gorm:"type:uuid;not null"`
 	Slug   string    `gorm:"type:varchar(255);not null"`
 	URL    string    `gorm:"type:varchar(255);not null"`
+	gorm.Model
 }
 
 func (u *Link) BeforeCreate(tx *gorm.DB) (err error) {

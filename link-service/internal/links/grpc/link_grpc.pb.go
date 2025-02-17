@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LinkService_GetLinks_FullMethodName     = "/links.LinkService/GetLinks"
-	LinkService_GetLink_FullMethodName      = "/links.LinkService/GetLink"
-	LinkService_CreateLink_FullMethodName   = "/links.LinkService/CreateLink"
-	LinkService_DeleteLink_FullMethodName   = "/links.LinkService/DeleteLink"
-	LinkService_GenerateSlug_FullMethodName = "/links.LinkService/GenerateSlug"
+	LinkService_GetLinks_FullMethodName      = "/links.LinkService/GetLinks"
+	LinkService_GetLink_FullMethodName       = "/links.LinkService/GetLink"
+	LinkService_GetLinkBySlug_FullMethodName = "/links.LinkService/GetLinkBySlug"
+	LinkService_CreateLink_FullMethodName    = "/links.LinkService/CreateLink"
+	LinkService_DeleteLink_FullMethodName    = "/links.LinkService/DeleteLink"
+	LinkService_GenerateSlug_FullMethodName  = "/links.LinkService/GenerateSlug"
 )
 
 // LinkServiceClient is the client API for LinkService service.
@@ -32,6 +33,7 @@ const (
 type LinkServiceClient interface {
 	GetLinks(ctx context.Context, in *GetLinksRequest, opts ...grpc.CallOption) (*GetLinksResponse, error)
 	GetLink(ctx context.Context, in *GetLinkRequest, opts ...grpc.CallOption) (*LinkResponse, error)
+	GetLinkBySlug(ctx context.Context, in *GetLinkBySlugRequest, opts ...grpc.CallOption) (*LinkResponse, error)
 	CreateLink(ctx context.Context, in *CreateLinkRequest, opts ...grpc.CallOption) (*LinkResponse, error)
 	DeleteLink(ctx context.Context, in *DeleteLinkRequest, opts ...grpc.CallOption) (*DeleteLinkResponse, error)
 	GenerateSlug(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GenerateSlugResponse, error)
@@ -59,6 +61,16 @@ func (c *linkServiceClient) GetLink(ctx context.Context, in *GetLinkRequest, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LinkResponse)
 	err := c.cc.Invoke(ctx, LinkService_GetLink_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *linkServiceClient) GetLinkBySlug(ctx context.Context, in *GetLinkBySlugRequest, opts ...grpc.CallOption) (*LinkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LinkResponse)
+	err := c.cc.Invoke(ctx, LinkService_GetLinkBySlug_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +113,7 @@ func (c *linkServiceClient) GenerateSlug(ctx context.Context, in *Empty, opts ..
 type LinkServiceServer interface {
 	GetLinks(context.Context, *GetLinksRequest) (*GetLinksResponse, error)
 	GetLink(context.Context, *GetLinkRequest) (*LinkResponse, error)
+	GetLinkBySlug(context.Context, *GetLinkBySlugRequest) (*LinkResponse, error)
 	CreateLink(context.Context, *CreateLinkRequest) (*LinkResponse, error)
 	DeleteLink(context.Context, *DeleteLinkRequest) (*DeleteLinkResponse, error)
 	GenerateSlug(context.Context, *Empty) (*GenerateSlugResponse, error)
@@ -119,6 +132,9 @@ func (UnimplementedLinkServiceServer) GetLinks(context.Context, *GetLinksRequest
 }
 func (UnimplementedLinkServiceServer) GetLink(context.Context, *GetLinkRequest) (*LinkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLink not implemented")
+}
+func (UnimplementedLinkServiceServer) GetLinkBySlug(context.Context, *GetLinkBySlugRequest) (*LinkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLinkBySlug not implemented")
 }
 func (UnimplementedLinkServiceServer) CreateLink(context.Context, *CreateLinkRequest) (*LinkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLink not implemented")
@@ -182,6 +198,24 @@ func _LinkService_GetLink_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LinkServiceServer).GetLink(ctx, req.(*GetLinkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LinkService_GetLinkBySlug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLinkBySlugRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LinkServiceServer).GetLinkBySlug(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LinkService_GetLinkBySlug_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LinkServiceServer).GetLinkBySlug(ctx, req.(*GetLinkBySlugRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,6 +288,10 @@ var LinkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLink",
 			Handler:    _LinkService_GetLink_Handler,
+		},
+		{
+			MethodName: "GetLinkBySlug",
+			Handler:    _LinkService_GetLinkBySlug_Handler,
 		},
 		{
 			MethodName: "CreateLink",

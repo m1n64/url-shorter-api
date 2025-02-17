@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -19,6 +20,21 @@ var dependencies *di.Dependencies
 
 func init() {
 	dependencies = di.InitDependencies()
+
+	go func() {
+		fmt.Println("Starting cache links globally...")
+		allLinks, err := dependencies.LinkService.GetAll()
+		if err == nil {
+			for _, link := range allLinks {
+				err := dependencies.LinkCacheService.SaveLinkInGlobalCache(link)
+				if err != nil {
+					dependencies.Logger.Error("Error saving link in global cache: ", zap.Error(err))
+				}
+			}
+		}
+
+		fmt.Println("Links successfully globally cached!")
+	}()
 }
 
 func main() {
@@ -34,7 +50,7 @@ func main() {
 		grpc.UnaryInterceptor(tokenAuthInterceptor),
 	)
 
-	linkServer := handlers.NewLinkServiceServer(dependencies.SlugService)
+	linkServer := handlers.NewLinkServiceServer(dependencies.LinkService, dependencies.SlugService, dependencies.Validator)
 	links.RegisterLinkServiceServer(grpcServer, linkServer)
 
 	log.Printf("gRPC server is running on port %s", port)

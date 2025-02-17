@@ -1,7 +1,9 @@
 package utils
 
+import "link-service/internal/links/models"
+
 func StartMigrations() {
 	db := GetDBConnection()
 
-	db.AutoMigrate()
+	db.AutoMigrate(&models.Link{})
 }

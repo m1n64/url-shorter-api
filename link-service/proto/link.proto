@@ -7,6 +7,7 @@ option go_package = "./internal/links/grpc;links";
 service LinkService {
   rpc GetLinks(GetLinksRequest) returns (GetLinksResponse);
   rpc GetLink(GetLinkRequest) returns (LinkResponse);
+  rpc GetLinkBySlug(GetLinkBySlugRequest) returns (LinkResponse);
   rpc CreateLink(CreateLinkRequest) returns (LinkResponse);
   rpc DeleteLink(DeleteLinkRequest) returns (DeleteLinkResponse);
   rpc GenerateSlug(Empty) returns (GenerateSlugResponse);
@@ -19,6 +20,11 @@ message GetLinksRequest {
 }
 
 message GetLinkRequest {
+  string user_id = 1;
+  string id = 2;
+}
+
+message GetLinkBySlugRequest {
   string slug = 1;
 }
 
