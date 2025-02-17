@@ -57,6 +57,20 @@ func (s *LinkServiceServer) GetLinks(ctx context.Context, request *links.GetLink
 	}, nil
 }
 
+func (s *LinkServiceServer) GetLink(ctx context.Context, request *links.GetLinkRequest) (*links.LinkResponse, error) {
+	if uuid.Validate(request.Id) != nil || uuid.Validate(request.UserId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid id or user id")
+	}
+
+	link, err := s.linkService.GetByID(uuid.MustParse(request.UserId), uuid.MustParse(request.Id))
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return s.getResponse(link), nil
+}
+
 func (s *LinkServiceServer) CreateLink(ctx context.Context, request *links.CreateLinkRequest) (*links.LinkResponse, error) {
 	req := &CreateLinkRequest{
 		UserId: request.UserId,
@@ -80,6 +94,21 @@ func (s *LinkServiceServer) CreateLink(ctx context.Context, request *links.Creat
 	}
 
 	return s.getResponse(link), nil
+}
+
+func (s *LinkServiceServer) DeleteLink(ctx context.Context, request *links.DeleteLinkRequest) (*links.DeleteLinkResponse, error) {
+	if uuid.Validate(request.Id) != nil || uuid.Validate(request.UserId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid id or user id")
+	}
+
+	err := s.linkService.Delete(uuid.MustParse(request.UserId), uuid.MustParse(request.Id))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &links.DeleteLinkResponse{
+		Deleted: true,
+	}, nil
 }
 
 func (s *LinkServiceServer) GenerateSlug(ctx context.Context, request *links.Empty) (*links.GenerateSlugResponse, error) {
