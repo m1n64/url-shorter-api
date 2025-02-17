@@ -67,11 +67,11 @@ func (s *LinkCacheService) SetLinkInLocalCache(link *models.Link) error {
 		return err
 	}
 
-	return s.redisClient.Set(context.Background(), s.createRedisKey(link.ID, link.UserID), body, 24*time.Hour).Err()
+	return s.redisClient.Set(context.Background(), link.Slug, body, 24*time.Hour).Err()
 }
 
-func (s *LinkCacheService) GetLinkFromLocalCache(id uuid.UUID, userID uuid.UUID) (*models.Link, error) {
-	link, err := s.redisClient.Get(context.Background(), s.createRedisKey(id, userID)).Result()
+func (s *LinkCacheService) GetLinkFromLocalCache(slug string) (*models.Link, error) {
+	link, err := s.redisClient.Get(context.Background(), slug).Result()
 	if err != nil {
 		if !errors.Is(err, redis.Nil) {
 			s.logger.Error("Error getting link from local cache: ", zap.Error(err))
@@ -90,8 +90,8 @@ func (s *LinkCacheService) GetLinkFromLocalCache(id uuid.UUID, userID uuid.UUID)
 	return linkModel, nil
 }
 
-func (s *LinkCacheService) RemoveLinkFromLocalCache(id uuid.UUID, userID uuid.UUID) error {
-	return s.redisClient.Del(context.Background(), s.createRedisKey(id, userID)).Err()
+func (s *LinkCacheService) RemoveLinkFromLocalCache(slug string) error {
+	return s.redisClient.Del(context.Background(), slug).Err()
 }
 
 func (s *LinkCacheService) createRedisKey(id uuid.UUID, userID uuid.UUID) string {

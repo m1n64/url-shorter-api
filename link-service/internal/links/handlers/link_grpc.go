@@ -19,12 +19,6 @@ type LinkServiceServer struct {
 	validator   *validator.Validate
 }
 
-type CreateLinkRequest struct {
-	UserId string  `validate:"required,uuid"`
-	Url    string  `validate:"required,url"`
-	Slug   *string `validate:"omitempty"`
-}
-
 func NewLinkServiceServer(
 	linkService *services.LinkService,
 	slugService *services.SlugService,
@@ -71,8 +65,22 @@ func (s *LinkServiceServer) GetLink(ctx context.Context, request *links.GetLinkR
 	return s.getResponse(link), nil
 }
 
+func (s *LinkServiceServer) GetLinkBySlug(ctx context.Context, request *links.GetLinkBySlugRequest) (*links.LinkResponse, error) {
+	if s.validator.Var(request.Slug, "required") != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid slug")
+	}
+
+	link, err := s.linkService.GetBySlug(request.Slug)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return s.getResponse(link), nil
+}
+
 func (s *LinkServiceServer) CreateLink(ctx context.Context, request *links.CreateLinkRequest) (*links.LinkResponse, error) {
-	req := &CreateLinkRequest{
+	req := &services.CreateLinkRequest{
 		UserId: request.UserId,
 		Url:    request.Url,
 		Slug:   request.Slug,
@@ -82,13 +90,13 @@ func (s *LinkServiceServer) CreateLink(ctx context.Context, request *links.Creat
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	slug := s.slugService.GenerateSlug()
+	if req.Slug == nil {
+		slug := s.slugService.GenerateSlug()
 
-	if req.Slug != nil {
-		slug = *req.Slug
+		req.Slug = &slug
 	}
 
-	link, err := s.linkService.Create(uuid.MustParse(req.UserId), req.Url, slug)
+	link, err := s.linkService.Create(req)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	links "link-service/internal/links/grpc"
 	"link-service/internal/links/handlers"
+	"link-service/internal/links/workers"
 	"link-service/pkg/di"
 	"log"
 	"net"
@@ -21,20 +21,7 @@ var dependencies *di.Dependencies
 func init() {
 	dependencies = di.InitDependencies()
 
-	go func() {
-		fmt.Println("Starting cache links globally...")
-		allLinks, err := dependencies.LinkService.GetAll()
-		if err == nil {
-			for _, link := range allLinks {
-				err := dependencies.LinkCacheService.SaveLinkInGlobalCache(link)
-				if err != nil {
-					dependencies.Logger.Error("Error saving link in global cache: ", zap.Error(err))
-				}
-			}
-		}
-
-		fmt.Println("Links successfully globally cached!")
-	}()
+	go workers.RevalidateLinksInCache(dependencies.LinkService)
 }
 
 func main() {
