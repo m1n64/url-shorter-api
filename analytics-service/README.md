@@ -4,7 +4,7 @@
 Service for short links analytics.
 
 ### Stack:
-- Go 1.23[makefile](../makefile)
+- Go 1.23
 - Postgres 15
 - ClickHouse
 - Redis
