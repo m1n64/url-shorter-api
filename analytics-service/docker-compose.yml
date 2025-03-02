@@ -1,0 +1,79 @@
+services:
+  tu-analytics-db:
+    image: postgres:latest
+    container_name: tu-analytics-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    restart: unless-stopped
+    volumes:
+      - tu_analytics_db_data:/var/lib/postgresql/data
+    networks:
+      - tidy-url-network
+
+  tu-analytics-redis:
+    container_name: tu-analytics-redis
+    hostname: redis
+    image: redis:latest
+    volumes:
+      - tu_analytics_redis_data:/data
+    restart: unless-stopped
+    networks:
+      - tidy-url-network
+
+  tu-analytics-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: prod
+    container_name: tu-analytics-backend
+    ports:
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    volumes:
+      - ./:/app:cached
+    depends_on:
+      - tu-analytics-db
+      - tu-analytics-redis
+      - tu-analytics-clickhouse
+    environment:
+      REDIS_ADDRESS: tu-analytics-redis:${REDIS_PORT:-6379}
+      DB_HOST: tu-analytics-db
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      CLICKHOUSE_HOST: tu-analytics-clickhouse
+      CLICKHOUSE_PORT: 9000
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-analytics}
+      GIN_MODE: "release"
+    restart: unless-stopped
+    networks:
+      - tidy-url-network
+
+  tu-analytics-clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: tu-analytics-clickhouse
+    restart: unless-stopped
+    volumes:
+      - tu_analytics_clickhouse_data:/var/lib/clickhouse
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-analytics}
+    networks:
+      - tidy-url-network
+
+volumes:
+  tu_analytics_db_data:
+    driver: local
+  tu_analytics_redis_data:
+    driver: local
+  tu_analytics_clickhouse_data:
+    driver: local
+
+networks:
+  tidy-url-network:
+    external: true

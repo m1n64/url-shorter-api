@@ -1,0 +1,15 @@
+services:
+  tu-analytics-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: dev
+    container_name: tu-analytics-backend
+    volumes:
+      - ./:/app:cached
+    command: air
+    ports:
+      - "5866:5864"
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    networks:
+      - tidy-url-network
