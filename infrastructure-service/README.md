@@ -15,6 +15,9 @@ cp .env.example .env
 ```shell
 docker-compose up -d
 ```
+```shell
+ docker exec -it tu-rabbitmq rabbitmq-plugins enable rabbitmq_stomp
+```
 
 ### Ports:
 - nginx: 80/443
