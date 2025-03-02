@@ -26,6 +26,7 @@ up:
     	if [ "$$service" = "infrastructure-service" ]; then \
     		echo "🟢 Starting $$service with default compose file..."; \
     		(cd $$service && docker-compose up -d || echo "❌ Error starting $$service"); \
+    		(cd $$service && docker exec -it tu-rabbitmq rabbitmq-plugins enable rabbitmq_stomp || echo "❌ Error stomp plugin enable in RabbitMQ $$service"); \
     		echo "⏳ Waiting for shared-network to be ready for $(SHARED_NETWORK_DELAY) seconds..."; \
             sleep $(SHARED_NETWORK_DELAY); \
     	else \

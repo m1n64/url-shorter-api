@@ -22,6 +22,19 @@ services:
     networks:
       - tidy-url-network
 
+  tu-analytics-clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: tu-analytics-clickhouse
+    restart: unless-stopped
+    volumes:
+      - tu_analytics_clickhouse_data:/var/lib/clickhouse
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-analytics}
+    networks:
+      - tidy-url-network
+
   tu-analytics-backend:
     build:
       context: ./
@@ -50,19 +63,6 @@ services:
       CLICKHOUSE_DB: ${CLICKHOUSE_DB:-analytics}
       GIN_MODE: "release"
     restart: unless-stopped
-    networks:
-      - tidy-url-network
-
-  tu-analytics-clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    container_name: tu-analytics-clickhouse
-    restart: unless-stopped
-    volumes:
-      - tu_analytics_clickhouse_data:/var/lib/clickhouse
-    environment:
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
-      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-analytics}
     networks:
       - tidy-url-network
 

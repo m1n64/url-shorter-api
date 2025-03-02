@@ -4,8 +4,9 @@
 Service for short links analytics.
 
 ### Stack:
-- Go 1.23
+- Go 1.23[makefile](../makefile)
 - Postgres 15
+- ClickHouse
 - Redis
 
 ### How to start (dev)
@@ -35,6 +36,7 @@ protoc --go_out=. --go-grpc_out=. <.proto>
 ### Ports:
 - Redis port: 6379
 - DB port: 5432
+- ClickHouse port: 9000
 - DLV port: 5866
 - gRPC port: 50051
 - HTTP port: -
