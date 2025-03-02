@@ -8,9 +8,9 @@ This project is a simple URL shorter API, written on Go in microservice architec
 
 ### Checklist:
 - [x] user-service (Authorization, token validation, user info) (gRPC)
-- [ ] url-service (URL shorter information) (gRPC, RabbitMQ)
+- [x] link-service (URL shorter information) (gRPC, RabbitMQ)
 - [ ] analytics-service (URL redirect analytics) (gRPC, RabbitMQ)
-- [ ] infrastructure-service (nginx, memcache, rabbitmq)
+- [x] infrastructure-service (OpenResty, memcache, rabbitmq)
 - [ ] gateway-service (REST API, maybe Krakend)
 - [ ] API docs service
 
