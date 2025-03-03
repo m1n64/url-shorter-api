@@ -32,8 +32,6 @@ func (r *analyticsEventClickHouseRepository) GetAll(shortLink string, filters Fi
 	var totalClicks uint32
 	var uniqueClicks uint32
 
-	r.clickHouse.Debug()
-
 	event := entities.AnalyticsEvent{}
 	query := r.clickHouse.Table(event.TableName()).Where("short_link = ?", shortLink)
 
