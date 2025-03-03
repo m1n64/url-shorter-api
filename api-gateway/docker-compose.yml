@@ -1,0 +1,8 @@
+services:
+  tu-api-gateway:
+    networks:
+      - tidy-url-network
+
+networks:
+  tidy-url-network:
+    external: true

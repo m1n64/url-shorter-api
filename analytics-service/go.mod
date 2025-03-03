@@ -11,6 +11,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
+	github.com/mssola/user_agent v0.6.0
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/streadway/amqp v1.1.0
 	go.uber.org/zap v1.27.0

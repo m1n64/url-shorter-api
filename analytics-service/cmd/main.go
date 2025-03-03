@@ -1,6 +1,8 @@
 package main
 
 import (
+	analytics "analytics-service/internal/analytics/grpc"
+	"analytics-service/internal/analytics/handlers"
 	"analytics-service/pkg/di"
 	"context"
 	"fmt"
@@ -33,6 +35,9 @@ func main() {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(tokenAuthInterceptor),
 	)
+
+	analyticsServiceServer := handlers.NewAnalyticsServiceServer(dependencies.AnalyticsEventService)
+	analytics.RegisterAnalyticsServiceServer(grpcServer, analyticsServiceServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package analytics;
+
+option go_package = "./internal/analytics/grpc;analytics";
+
+service AnalyticsService {
+  rpc GetGeneralStats(AnalyticsRequest) returns (AnalyticsResponse);
+  rpc GetClicksPerDay(AnalyticsCleanRequest) returns (ClicksByDayResponse);
+  rpc GetCountriesStats(AnalyticsRequest) returns (CountryResponse);
+  rpc GetDeviceStats(AnalyticsRequest) returns (DeviceResponse);
+  rpc GetBrowserStats(AnalyticsRequest) returns (BrowserResponse);
+  rpc GetOSStats(AnalyticsRequest) returns (OSResponse);
+}
+
+message AnalyticsCleanRequest {
+  string short_url = 1;
+}
+
+message AnalyticsRequest {
+  string short_url = 1;
+  optional uint64 start_date = 2;
+  optional uint64 end_date = 3;
+  optional string device = 4;
+  optional string browser = 5;
+  optional string os = 6;
+  optional string country = 7;
+  optional uint32 page = 8;
+  optional uint32 per_page = 9;
+}
+
+message AnalyticsResponse {
+  string short_url = 1;
+  uint32 total_clicks = 3;
+  uint32 unique_clicks = 4;
+  repeated Analytics analytics = 5;
+  uint32 page = 6;
+  uint32 total_pages = 7;
+  uint32 per_page = 8;
+}
+
+message Analytics {
+  string short_url = 1;
+  string ip = 2;
+  string user_agent = 3;
+  string country = 4;
+  string browser = 5;
+  string browser_version = 6;
+  string os = 7;
+  string os_version = 8;
+  string device = 9;
+  uint64 timestamp = 10;
+}
+
+message CountryResponse {
+  uint32 total_clicks = 1;
+  repeated DistinctData country = 2;
+}
+
+message DeviceResponse {
+  uint32 total_clicks = 1;
+  repeated DistinctData device = 2;
+}
+
+message BrowserResponse {
+  uint32 total_clicks = 1;
+  repeated DistinctData browser = 2;
+}
+
+message OSResponse {
+  uint32 total_clicks = 1;
+  repeated DistinctData os = 2;
+}
+
+message DistinctData {
+  string name = 1;
+  uint32 count = 2;
+  uint32 percentage = 3;
+}
+
+message ClicksByDayResponse {
+  repeated Click clicks = 1;
+}
+
+message Click {
+  uint32 total_clicks = 1;
+  uint64 timestamp = 2;
+}

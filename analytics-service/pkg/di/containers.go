@@ -15,16 +15,17 @@ import (
 )
 
 type Dependencies struct {
-	Logger                *zap.Logger
-	Redis                 *redis.Client
-	DB                    *gorm.DB
-	ClickHouseDB          *gorm.DB
-	Validator             *validator.Validate
-	RabbitMQ              *utils.RabbitMQConnection
-	ChromeAllocator       *chromium.ChromeAllocator
-	AnalyticsEventRepo    repositories.AnalyticsEventRepository
-	CountryService        *services2.CountryService
-	AnalyticsEventService *services.AnalyticsEventService
+	Logger                 *zap.Logger
+	Redis                  *redis.Client
+	DB                     *gorm.DB
+	ClickHouseDB           *gorm.DB
+	Validator              *validator.Validate
+	RabbitMQ               *utils.RabbitMQConnection
+	ChromeAllocator        *chromium.ChromeAllocator
+	AnalyticsEventRepo     repositories.AnalyticsEventRepository
+	CountryService         *services2.CountryService
+	UserAgentParserService *services2.UserAgentParserService
+	AnalyticsEventService  *services.AnalyticsEventService
 }
 
 func InitDependencies() *Dependencies {
@@ -47,19 +48,21 @@ func InitDependencies() *Dependencies {
 
 	// Services
 	countryService := services2.NewCountryService(logger)
-	analyticsEventService := services.NewAnalyticsEventService(analyticsEventRepository, countryService, logger)
+	userAgentParserService := services2.NewUserAgentParserService()
+	analyticsEventService := services.NewAnalyticsEventService(analyticsEventRepository, countryService, userAgentParserService, logger)
 
 	return &Dependencies{
-		Logger:                logger,
-		Redis:                 redisConn,
-		DB:                    dbConn,
-		ClickHouseDB:          dbClickHouse,
-		Validator:             validate,
-		RabbitMQ:              rabbitMQ,
-		ChromeAllocator:       chromeAllocator,
-		AnalyticsEventRepo:    analyticsEventRepository,
-		CountryService:        countryService,
-		AnalyticsEventService: analyticsEventService,
+		Logger:                 logger,
+		Redis:                  redisConn,
+		DB:                     dbConn,
+		ClickHouseDB:           dbClickHouse,
+		Validator:              validate,
+		RabbitMQ:               rabbitMQ,
+		ChromeAllocator:        chromeAllocator,
+		AnalyticsEventRepo:     analyticsEventRepository,
+		CountryService:         countryService,
+		UserAgentParserService: userAgentParserService,
+		AnalyticsEventService:  analyticsEventService,
 	}
 }
 

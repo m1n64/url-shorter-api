@@ -12,6 +12,11 @@ type AnalyticsEvent struct {
 	Country     string    `gorm:"column:country;type:String" json:"country"`
 	Referer     string    `gorm:"column:referer;type:String" json:"referer"`
 	UserAgent   string    `gorm:"column:user_agent;type:String" json:"user_agent"`
+	Device      string    `gorm:"column:device;type:String" json:"device"`
+	OS          string    `gorm:"column:os;type:String" json:"os"`
+	OSVersion   string    `gorm:"column:os_version;type:String" json:"os_version"`
+	Browser     string    `gorm:"column:browser;type:String" json:"browser"`
+	BrowserVer  string    `gorm:"column:browser_version;type:String" json:"browser_version"`
 	Timestamp   time.Time `gorm:"column:timestamp;type:DateTime64(3)" json:"timestamp"`
 }
 
